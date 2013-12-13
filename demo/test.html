@@ -11,13 +11,18 @@
 	<script type="text/javascript" charset="utf-8">
 	 $(function () {
 	   $('#colorpicker1').farbtastic('#color1');
-	   $('#colorpicker2').farbtastic({ callback: '#color2', width: 150 });
+	   $('#colorpicker2').farbtastic({ callback: '#color2', width: 220 });
 	 });
 	</script>
 	<style type="text/css" media="screen">
 	 .colorpicker {
 	   float: left;
 	   margin: 1em;
+	   padding: 1em;
+	   background-color: #333;
+	 }
+	 .colorpicker canvas:active { 
+	 		cursor: crosshair;
 	 }
 	 form {
 	   margin: 2em 1em 0 1;

@@ -113,7 +113,7 @@ $._farbtastic = function (container, options) {
 
     // Determine layout
     fb.radius = (options.width - options.wheelWidth) / 2 - 1;
-    fb.square = Math.floor((fb.radius - options.wheelWidth / 2) * 0.7) - 1;
+    fb.square = Math.floor((fb.radius - options.wheelWidth / 2) * 0.65) - 1;
     fb.mid = Math.floor(options.width / 2);
     fb.markerSize = options.wheelWidth * 0.3;
     fb.solidFill = $('.farbtastic-solid', container).css({
@@ -130,6 +130,11 @@ $._farbtastic = function (container, options) {
     fb.ctxOverlay = fb.cnvOverlay[0].getContext('2d');
     fb.ctxMask.translate(fb.mid, fb.mid);
     fb.ctxOverlay.translate(fb.mid, fb.mid);
+
+    fb.ctxOverlay.shadowOffsetX = 0;
+    fb.ctxOverlay.shadowOffsetY = 0;
+    fb.ctxOverlay.shadowBlur = 8;
+    fb.ctxOverlay.shadowColor = 'rgba(0,0,0,.5)';
 
     // Draw widget base layers.
     fb.drawCircle();
@@ -296,19 +301,21 @@ $._farbtastic = function (container, options) {
    */
   fb.drawMarkers = function () {
     // Determine marker dimensions
-    var sz = options.width, lw = Math.ceil(fb.markerSize / 4), r = fb.markerSize - lw + 1;
+    var sz = options.width,
+        lw = Math.ceil(fb.markerSize / 4), 
+        r = fb.markerSize - lw;
     var angle = fb.hsl[0] * 6.28,
         x1 =  Math.sin(angle) * fb.radius,
         y1 = -Math.cos(angle) * fb.radius,
         x2 = 2 * fb.square * (.5 - fb.hsl[1]),
         y2 = 2 * fb.square * (.5 - fb.hsl[2]),
-        c1 = fb.invert ? '#fff' : '#000',
-        c2 = fb.invert ? '#000' : '#fff';
+        c1 = fb.invert ? '#fff' : 'rgba(0,0,0,.6)',
+        c2 = fb.invert ? 'rgba(0,0,0,.6)' : '#fff';
     var circles = [
-      { x: x1, y: y1, r: r,             c: '#000', lw: lw + 1 },
-      { x: x1, y: y1, r: fb.markerSize, c: '#fff', lw: lw },
-      { x: x2, y: y2, r: r,             c: c2,     lw: lw + 1 },
-      { x: x2, y: y2, r: fb.markerSize, c: c1,     lw: lw },
+      { x: x1, y: y1, r: fb.markerSize + 2, c: 'rgba(0,0,0,.4)', lw: lw + 3 },
+      { x: x1, y: y1, r: fb.markerSize + 2, c: '#fff', lw: lw },
+      { x: x2, y: y2, r: fb.markerSize , c: c2, lw: lw + 3 },
+      { x: x2, y: y2, r: fb.markerSize , c: c1, lw: lw },
     ];
 
     // Update the overlay canvas.
@@ -381,7 +388,7 @@ $._farbtastic = function (container, options) {
 
     // Check which area is being dragged
     var pos = fb.widgetCoords(event);
-    fb.circleDrag = Math.max(Math.abs(pos.x), Math.abs(pos.y)) > (fb.square + 2);
+    fb.circleDrag = Math.max(Math.abs(pos.x), Math.abs(pos.y)) > (fb.square + 12);
 
     // Process
     fb.mousemove(event);
