@@ -89,12 +89,12 @@ $._farbtastic = function (container, options) {
     $(container)
       .html(
         '<div class="farbtastic" style="position: relative">' +
-          '<div class="farbtastic-solid"></div>' +
+          '<div class="farbtastic-solid"><canvas></canvas></div>' +
           '<canvas class="farbtastic-mask"></canvas>' +
           '<canvas class="farbtastic-overlay"></canvas>' +
         '</div>'
       )
-      .find('*').attr(dim).css(dim).end()
+      .find('div, canvas[class]').attr(dim).css(dim).end()
       .find('div>*').css('position', 'absolute');
 
     // IE Fix: Recreate canvas elements with doc.createElement and excanvas.
@@ -122,6 +122,16 @@ $._farbtastic = function (container, options) {
       left: fb.mid - fb.square,
       top: fb.mid - fb.square
     });
+
+    // mask canvas in solid 
+    fb.solidMask = fb.solidFill.children("canvas").css({
+      width: fb.square * 2 - 1,
+      height: fb.square * 2 - 1
+    }).attr({
+      width: fb.square * 2 - 1,
+      height: fb.square * 2 - 1
+    });
+    fb.ctxSolidMask = fb.solidMask[0].getContext('2d');
 
     // Set up drawing context.
     fb.cnvMask = $('.farbtastic-mask', container);
@@ -233,9 +243,9 @@ $._farbtastic = function (container, options) {
     }
 
     // Method #1: direct pixel access (new Canvas).
-    if (fb.ctxMask.getImageData) {
+    if (fb.ctxSolidMask.getImageData) {
       // Create half-resolution buffer.
-      var sz = Math.floor(size / 2);
+      var sz = Math.floor(size);
       var buffer = document.createElement('canvas');
       buffer.width = buffer.height = sz + 1;
       var ctx = buffer.getContext('2d');
@@ -248,7 +258,7 @@ $._farbtastic = function (container, options) {
       });
 
       ctx.putImageData(frame, 0, 0);
-      fb.ctxMask.drawImage(buffer, 0, 0, sz + 1, sz + 1, -sq, -sq, sq * 2, sq * 2);
+      fb.ctxSolidMask.drawImage(buffer, 0, 0, sz + 1, sz + 1, 0, 0, sq * 2, sq * 2);
     }
     // Method #2: drawing commands (old Canvas).
     else if (!($.browser.msie || false)) {
